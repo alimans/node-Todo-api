@@ -4,13 +4,22 @@ const request =require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+const todos = [{
+  text: 'first test text'
+}, {
+  text: 'second test text'
+}];
+
 const expect = chai.expect;
+
 beforeEach((done) => {
-  Todo.remove({}).then(() =>  done()) // this will clean database before each test.
+  Todo.remove({}).then(() =>  {
+    return Todo.insertMany(todos);
+  }).then(() => done()); // this will clean database before each test.
 })
 
 describe('POST /todos', () =>{
-  it('should creat a new todo', (done) => {
+  it('should create a new todo', (done) => {
     var text = 'Test todo text';
     request(app)
     .post('/todos')
@@ -23,7 +32,7 @@ describe('POST /todos', () =>{
       if (err) {
         return done(err);
       }
-      Todo.find().then((todos) => {
+      Todo.find({text}).then((todos) => {
         expect(todos.length).to.equal(1);
         expect(todos[0].text).to.equal(text);
         done();
@@ -31,7 +40,7 @@ describe('POST /todos', () =>{
     });
   });
 
-  it('should not creat a new todo', (done) => {
+  it('should not create a new todo', (done) => {
     request(app)
     .post('/todos')
     .send({})
@@ -42,10 +51,27 @@ describe('POST /todos', () =>{
       }
 
       Todo.find().then((todos) => {
-        expect(todos.length).to.equal(0);
+        expect(todos.length).to.equal(2);
         done();
       }).catch((err) => done(err));
     });
 
+  });
+});
+
+describe('GET /todos' , () => {
+  it('should get all todos', (done) => {
+    request(app)
+      .get('/todos')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todos.length).to.equal(2);
+      }).end((err, res) => {
+        if (err) {
+          return done(err);
+        };
+          done();
+
+      });
   });
 });
