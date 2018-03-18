@@ -1,4 +1,4 @@
-var {mongoose} = require('../db/mongoose');
+var {mongoose} = require('./../db/mongoose');
 
 // Schema for User collection
  var User = mongoose.model('User', {

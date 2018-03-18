@@ -24,21 +24,5 @@ app.post('/todos', (req, res) => {
 app.listen(3000, ()=> {
   console.log('Listening to port 3000');
 });
- //
- //
- // newTodo.save().then((doc) => {
- //   console.log(doc);
- // }, (er) => {
- //   console.log(er);
- // });
- //
- // var newUser = new User ({
- //   name: 'Ali',
- //   age: 39
- // });
- //
- // newUser.save().then((doc) => {
- //   console.log(doc);
- // }, (er) => {
- //   console.log(er);
- // });
+
+module.exports = {app};
