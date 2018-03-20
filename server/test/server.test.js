@@ -140,3 +140,45 @@ describe('DELETE /todos/:id', () => {
       .end(done);
   });
 });
+
+describe('PATCH /todos/:id', () => {
+  it('should update todo', (done) => {
+    var hexId = todos[0]._id.toHexString();
+    todos[0].text = 'Patched by test';
+    todos[0].completed = true;
+    request(app)
+      .patch(`/todos/${hexId}`)
+      .send(todos[0])
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).to.equal('Patched by test');
+        expect(res.body.todo.completed).to.be.true;
+        expect(res.body.todo.completedAt).to.be.a('number');
+      }).end((err, res) => {
+        if (err) {
+          return done(err);
+        };
+        done();
+      });
+  });
+
+  it('should clear completedAt when completed is not completed', (done) => {
+    var hexId = todos[1]._id.toHexString();
+    todos[0].text = 'Patched by test2';
+    todos[0].completed = false;
+    request(app)
+      .patch(`/todos/${hexId}`)
+      .send(todos[0])
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).to.equal('Patched by test2');
+        expect(res.body.todo.completed).to.be.false;
+        expect(res.body.todo.completedAt).to.be.null;
+      }).end((err, res) => {
+        if (err) {
+          return done(err);
+        };
+        done();
+      });
+  });
+});
