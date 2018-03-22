@@ -32,8 +32,8 @@ var UserSchema = new mongoose.Schema({
     }
   }]
 });
-
-UserSchema.methods.toJSON = function () {
+// UserSchema.methods used for adding methods to "instance methods"
+UserSchema.methods.toJSON = function () { // this is overriding the toJSON for returning modified model element
   var user = this;
   var userObject = user.toObject();
   return _.pick(userObject, ['_id', 'email']);
@@ -50,6 +50,23 @@ UserSchema.methods.toJSON = function () {
      return token;
    });
  };
+// UserSchema.statics used for adding methods to "Model methods"
+UserSchema.statics.findByToken = function (token) {
+  var User = this;
+  var decoded;
+
+  try {
+    decoded = jwt.verify(token, '123abc');
+  } catch (e) {
+    return Promise.reject();
+  }
+
+  return User.findOne({
+    'id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'Auth'
+  });
+};
 
  var User = mongoose.model('User', UserSchema );
 
