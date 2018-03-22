@@ -80,6 +80,18 @@ app.patch('/todos/:id', (req, res) => {
   }).catch((er) => res.status(400).send());
 });
 
+app.post('/users', (req, res) => {
+  var reqUser = _.pick(req.body, ['email', 'password'])
+  var user = new User(reqUser);
+  user.save().then(() => {
+      return user.generateAuthToken();
+    }).then((token) => {
+      res.header('x-Auth', token).send(user);
+    }).catch((er) => {
+      res.status(400).send(er);
+    });
+});
+
 app.listen(port, ()=> {
   console.log(`Listening to port ${port}`);
 });
