@@ -43,7 +43,7 @@ UserSchema.methods.toJSON = function () { // this is overriding the toJSON for r
  UserSchema.methods.generateAuthToken = function () {
    var user = this;
    var access = 'Auth';
-   var token = jwt.sign({id: user._id.toHexString(), access}, '123abc').toString();
+   var token = jwt.sign({_id: user._id.toHexString(), access}, '123abc').toString();
 
    user.tokens.push({access, token});
 
@@ -63,7 +63,7 @@ UserSchema.statics.findByToken = function (token) {
   }
 
   return User.findOne({
-    'id': decoded._id,
+    '_id': decoded._id,
     'tokens.token': token,
     'tokens.access': 'Auth'
   });
