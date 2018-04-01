@@ -299,3 +299,26 @@ describe('POST /users/login', () => {
     });
   });
 });
+
+describe('DELETE /users/me/token', () => {
+  it('should remove auth token on logout' , (done) => {
+    var token = users[0].tokens[0].token;
+    request(app)
+    .delete('/users/me/token')
+    .set('x-auth', token)
+    .expect(200)
+    .expect((res) => {
+      expect(res.header['x-auth']).to.be.undefined;
+    }).end((er, res) => {
+      if (er) {
+        return done(er);
+      };
+      User.findById(users[0]._id).then((user) => {
+        expect(user.tokens.length).to.be.equal(0);
+        done();
+      }).catch((er) => {
+        done(er);
+      });
+    });
+  });
+});
