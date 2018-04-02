@@ -15,6 +15,10 @@ var {mongoose} = require('./../db/mongoose');
    completedAt: {
      type: Number,
      default: null
+   },
+   _creator: {
+     type: mongoose.Schema.ObjectId,
+     required: true
    }
  });
 
